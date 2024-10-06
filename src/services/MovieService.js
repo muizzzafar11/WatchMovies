@@ -5,7 +5,7 @@ const searchByTitle = async (title) => {
     method: 'GET',
     url: 'https://streaming-availability.p.rapidapi.com/shows/search/title',
     params: {
-      country: 'us',
+      country: 'ca',
       title: title, // The search term will be passed in
       series_granularity: 'show',
       show_type: 'movie',

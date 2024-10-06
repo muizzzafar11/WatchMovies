@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import searchByTitle from '../services/MovieService'; // Import the API call function
-import Card from '../components/Card'; // Import the Card component
+import searchByTitle from '../services/MovieService';
+import Card from '../components/Card';
 
 function SearchResults() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const query = searchParams.get('search'); // Get the search query from the URL
+  const query = searchParams.get('search');
   const [results, setResults] = useState([]);
 
   useEffect(() => {
@@ -14,9 +14,7 @@ function SearchResults() {
       if (query) {
         const data = await searchByTitle(query);
         if (data) {
-          // Assuming the response data is an object for each show
-          setResults(data); // Wrap the object in an array to map over it
-          console.log({data})
+          setResults(Array.isArray(data) ? data : [data]);
         }
       }
     };
@@ -32,8 +30,9 @@ function SearchResults() {
           results.map((result, index) => (
             <Card
               key={index}
+              id={result.id}
               title={result.title}
-              image={result.imageSet?.verticalPoster?.w240} // Use the vertical poster image
+              image={result.imageSet?.verticalPoster?.w240}
               overview={result.overview}
               releaseYear={result.releaseYear}
               rating={result.rating}
