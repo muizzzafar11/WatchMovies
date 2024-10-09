@@ -1,30 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import searchByTitle from '../services/MovieService';
+import searchByGenre from '../services/SearchGenreService';  // Import the genre search service
 import Card from '../components/Card';
 
 function SearchResults() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const query = searchParams.get('search');
+  const query = searchParams.get('search');  // Search query
+  const searchType = searchParams.get('type');  // Get the search type (title or genre)
+  const genres = searchParams.get('genres');  // For genre search
   const [results, setResults] = useState([]);
 
   useEffect(() => {
     const fetchMovies = async () => {
-      if (query) {
-        const data = await searchByTitle(query);
-        if (data) {
-          setResults(Array.isArray(data) ? data : [data]);
-        }
+      let data = null;
+
+      // Check the search type and call the appropriate service
+      if (searchType === 'title' && query) {
+        data = await searchByTitle(query);
+      } else if (searchType === 'genre' && genres) {
+        data = await searchByGenre(genres);
+      }
+
+      if (data) {
+        setResults(Array.isArray(data) ? data : [data]);  // Ensure it's an array
       }
     };
 
     fetchMovies();
-  }, [query]);
+  }, [query, searchType, genres]);
 
   return (
     <div>
-      <h2>Results for "{query}"</h2>
+      <h2>Results for "{query || genres}"</h2>
       <div className="results-list">
         {results.length > 0 ? (
           results.map((result, index) => (
